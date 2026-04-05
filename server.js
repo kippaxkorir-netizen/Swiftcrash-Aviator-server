@@ -17,14 +17,7 @@ app.use(express.static(__dirname));
 // API routes and other middleware...
 // (Make sure this is placed AFTER your API/Admin routes but BEFORE the catch-all)
 
-// Catch-all route to serve index.html for SPA routing
-app.get('*', (req, res, next) => {
-  // If it's an API or Admin route, don't serve index.html, let it 404 or be handled
-  if (req.path.startsWith('/api') || req.path.startsWith('/chat') || req.path.startsWith('/admin')) {
-    return next();
-  }
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// API-only server — HTML is hosted separately, no catch-all needed
 
 // The port MUST be exactly what Replit expects or it won't be accessible
 const PORT = process.env.PORT || 5000;
@@ -64,11 +57,11 @@ pool.connect()
             phone VARCHAR(20) UNIQUE NOT NULL,
             pin VARCHAR(10) NOT NULL,
             balance DECIMAL(15, 2) DEFAULT 0.00,
-             withdrawal_status VARCHAR(20) DEFAULT 'enabled',
+            withdrawal_status VARCHAR(20) DEFAULT 'enabled',
             status VARCHAR(20) DEFAULT 'active',
             chat_status VARCHAR(20) DEFAULT 'active',
-            referral_code VARCHAR(50), 
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            referral_code VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -80,7 +73,7 @@ pool.connect()
             amount DECIMAL(15, 2) NOT NULL,
             multiplier DECIMAL(10, 2),
             status VARCHAR(20) NOT NULL DEFAULT 'placed',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -90,10 +83,10 @@ pool.connect()
             id SERIAL PRIMARY KEY,
             phone VARCHAR(20) NOT NULL,
             amount DECIMAL(15, 2) NOT NULL,
-            type VARCHAR(30) NOT NULL, 
+            type VARCHAR(30) NOT NULL,
             reference VARCHAR(100),
             status VARCHAR(20) NOT NULL DEFAULT 'success',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -104,7 +97,7 @@ pool.connect()
             phone VARCHAR(20) NOT NULL,
             message TEXT NOT NULL,
             is_read BOOLEAN DEFAULT FALSE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -126,7 +119,7 @@ pool.connect()
             type VARCHAR(20) DEFAULT 'text',
             reply_to INTEGER DEFAULT NULL,
             likes INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -136,7 +129,7 @@ pool.connect()
             id SERIAL PRIMARY KEY,
             chat_id INTEGER NOT NULL,
             username VARCHAR(50) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -150,7 +143,7 @@ pool.connect()
             current_claims INTEGER DEFAULT 0,
             min_balance DECIMAL(15,2) DEFAULT 50.00,
             active BOOLEAN DEFAULT TRUE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -160,7 +153,7 @@ pool.connect()
             id SERIAL PRIMARY KEY,
             cashrain_id INTEGER NOT NULL,
             username VARCHAR(50) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
@@ -178,8 +171,8 @@ pool.connect()
             fee DECIMAL(15, 2) NOT NULL,
             fee_reference VARCHAR(100),
             status VARCHAR(30) NOT NULL DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi',
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Nairobi'
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
 
