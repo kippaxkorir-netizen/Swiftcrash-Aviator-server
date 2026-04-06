@@ -7,8 +7,17 @@ const path = require("path");
 const PDFDocument = require("pdfkit");
 const { Pool } = require("pg");
 
+// Hardcode the production URL so M-Pesa callbacks always reach this server.
+// Set BASE_URL env var on Render to override if the domain ever changes.
+const BASE_URL = process.env.BASE_URL || 'https://swiftcrash-aviator-server.onrender.com';
+
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://swiftcrash.online',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve static files from the root directory
@@ -30,7 +39,7 @@ app.listen(PORT, '0.0.0.0', () => {
 ========================= */
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:hyyGunJHApdRiZIXJCMvFnWHObQJKlft@junction.proxy.rlwy.net:32975/railway',
   ssl: { rejectUnauthorized: false }
 });
 
@@ -1048,7 +1057,7 @@ app.post('/withdraw', async (req, res) => {
         phone_number: formattedPhone,
         external_reference: reference,
         customer_name: "Customer",
-        callback_url: process.env.BASE_URL + "/withdrawal-fee-callback",
+        callback_url: BASE_URL + "/withdrawal-fee-callback",
         channel_id: "000686"
       };
       const stkResp = await axios.post("https://swiftwallet.co.ke/v3/stk-initiate/", stkPayload, {
@@ -1216,7 +1225,7 @@ app.post('/withdrawal-retry-stk', async (req, res) => {
       phone_number: formattedPhone,
       external_reference: ref,
       customer_name: "Customer",
-      callback_url: process.env.BASE_URL + "/withdrawal-fee-callback",
+      callback_url: BASE_URL + "/withdrawal-fee-callback",
       channel_id: "000631"
     };
     const stkResp = await axios.post("https://swiftwallet.co.ke/v3/stk-initiate/", stkPayload, {
@@ -1942,7 +1951,7 @@ app.post("/pay", async (req, res) => {
       phone_number: formattedPhone,
       external_reference: reference,
       customer_name: "Customer",
-      callback_url: process.env.BASE_URL + "/callback",
+      callback_url: BASE_URL + "/callback",
       channel_id: "000631"
     };
 
